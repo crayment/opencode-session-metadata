@@ -9,15 +9,11 @@ import path from "path";
  * Store and retrieve arbitrary JSON metadata for OpenCode sessions.
  * Useful for tracking context, state, or relationships between sessions.
  */
-export const SessionMetadataPlugin: Plugin = async ({ client, directory }) => {
+export const SessionMetadataPlugin: Plugin = async ({ client }) => {
   const homeDir = process.env.HOME || process.env.USERPROFILE || "~";
   
   const getMetadataPath = (projectId: string, sessionId: string) => {
     return path.join(homeDir, ".local", "share", "opencode", "storage", "session-metadata", projectId, `${sessionId}.json`);
-  };
-
-  const getLegacyMetadataPath = (sessionId: string) => {
-    return path.join(directory, ".opencode", "sessionData", `${sessionId}.json`);
   };
 
   const ensureStorageDir = async (projectId: string) => {
@@ -68,45 +64,16 @@ New title: ${title}`;
         args: {},
         async execute(args, ctx) {
           try {
-            // First get session data to get projectID
+            // Get session data to get projectID
             const sessionResponse = await client.session.get({ path: { id: ctx.sessionID } });
             if (!sessionResponse.data) {
               return `Error: Could not retrieve session data to locate metadata`;
             }
             
             const projectId = (sessionResponse.data as any).projectID;
-            const newPath = getMetadataPath(projectId, ctx.sessionID);
-            const legacyPath = getLegacyMetadataPath(ctx.sessionID);
+            const filePath = getMetadataPath(projectId, ctx.sessionID);
             
-            // Try new location first
-            let content: string | null = null;
-            let usedPath: string = "";
-            
-            try {
-              content = await fs.readFile(newPath, "utf-8");
-              usedPath = newPath;
-            } catch (error) {
-              if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-                // Try legacy location
-                try {
-                  content = await fs.readFile(legacyPath, "utf-8");
-                  usedPath = legacyPath;
-                } catch (legacyError) {
-                  if ((legacyError as NodeJS.ErrnoException).code === 'ENOENT') {
-                    return `No metadata found for session: ${ctx.sessionID}
-
-Use the setMetadata tool to store custom data for this session.`;
-                  }
-                  throw legacyError;
-                }
-              } else {
-                throw error;
-              }
-            }
-            
-            if (!content) {
-              return `No metadata found for session: ${ctx.sessionID}`;
-            }
+            const content = await fs.readFile(filePath, "utf-8");
             
             let metadata;
             try {
@@ -114,12 +81,17 @@ Use the setMetadata tool to store custom data for this session.`;
             } catch (parseError) {
               return `Error: Metadata file exists but contains invalid JSON
 
-File: ${usedPath}
+File: ${filePath}
 Parse error: ${parseError instanceof Error ? parseError.message : String(parseError)}`;
             }
             
             return JSON.stringify(metadata, null, 2);
           } catch (error) {
+            if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+              return `No metadata found for session: ${ctx.sessionID}
+
+Use the setMetadata tool to store custom data for this session.`;
+            }
             return `Error reading metadata: ${error instanceof Error ? error.message : String(error)}`;
           }
         },

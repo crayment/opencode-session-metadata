@@ -50,7 +50,6 @@ Metadata is stored as JSON files in `~/.local/share/opencode/storage/session-met
 - Creates the storage directory
 - Adds `sessionId` and `storedAt` timestamps
 - Preserves any custom fields you provide
-- Falls back to legacy location (`.opencode/sessionData/`) for existing metadata
 
 ## Use Cases
 
@@ -97,8 +96,6 @@ Metadata is stored as JSON files in `~/.local/share/opencode/storage/session-met
 ## Storage Location
 
 Metadata files are stored in `~/.local/share/opencode/storage/session-metadata/<project-id>/`, organized by project alongside OpenCode's session storage.
-
-For backward compatibility, the plugin also reads from the legacy location (`.opencode/sessionData/`) if metadata isn't found in the new location.
 
 ## License
 
