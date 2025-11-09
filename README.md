@@ -46,7 +46,7 @@ Use setMetadata with metadata {"projectId": "proj-123", "status": "in-progress"}
 
 ## How It Works
 
-Metadata is stored as JSON files alongside OpenCode's session files in `~/.local/share/opencode/storage/session/<project-id>/<session-id>.metadata.json`. The plugin automatically:
+Metadata is stored as JSON files in `~/.local/share/opencode/storage/session-metadata/<project-id>/<session-id>.json`. The plugin automatically:
 - Creates the storage directory
 - Adds `sessionId` and `storedAt` timestamps
 - Preserves any custom fields you provide
@@ -96,7 +96,7 @@ Metadata is stored as JSON files alongside OpenCode's session files in `~/.local
 
 ## Storage Location
 
-Metadata files are stored in `~/.local/share/opencode/storage/session/<project-id>/` alongside OpenCode's session files, using the `.metadata.json` extension.
+Metadata files are stored in `~/.local/share/opencode/storage/session-metadata/<project-id>/`, organized by project alongside OpenCode's session storage.
 
 For backward compatibility, the plugin also reads from the legacy location (`.opencode/sessionData/`) if metadata isn't found in the new location.
 

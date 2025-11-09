@@ -13,7 +13,7 @@ export const SessionMetadataPlugin: Plugin = async ({ client, directory }) => {
   const homeDir = process.env.HOME || process.env.USERPROFILE || "~";
   
   const getMetadataPath = (projectId: string, sessionId: string) => {
-    return path.join(homeDir, ".local", "share", "opencode", "storage", "session", projectId, `${sessionId}.metadata.json`);
+    return path.join(homeDir, ".local", "share", "opencode", "storage", "session-metadata", projectId, `${sessionId}.json`);
   };
 
   const getLegacyMetadataPath = (sessionId: string) => {
@@ -21,7 +21,7 @@ export const SessionMetadataPlugin: Plugin = async ({ client, directory }) => {
   };
 
   const ensureStorageDir = async (projectId: string) => {
-    const dir = path.join(homeDir, ".local", "share", "opencode", "storage", "session", projectId);
+    const dir = path.join(homeDir, ".local", "share", "opencode", "storage", "session-metadata", projectId);
     await fs.mkdir(dir, { recursive: true });
   };
 
