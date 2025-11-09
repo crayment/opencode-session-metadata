@@ -1,0 +1,34 @@
+{
+  "name": "opencode-session-metadata",
+  "version": "1.0.0",
+  "description": "Store and retrieve arbitrary JSON metadata for OpenCode sessions",
+  "main": "dist/plugin.js",
+  "types": "dist/plugin.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "opencode",
+    "plugin",
+    "metadata",
+    "sessions",
+    "context",
+    "storage"
+  ],
+  "author": "Crayment",
+  "license": "MIT",
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=0.15.18"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^0.15.31",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+
