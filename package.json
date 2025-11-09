@@ -22,6 +22,14 @@
   ],
   "author": "Crayment",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crayment/opencode-session-metadata.git"
+  },
+  "bugs": {
+    "url": "https://github.com/crayment/opencode-session-metadata/issues"
+  },
+  "homepage": "https://github.com/crayment/opencode-session-metadata#readme",
   "peerDependencies": {
     "@opencode-ai/plugin": ">=0.15.18"
   },
