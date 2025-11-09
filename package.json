@@ -1,6 +1,6 @@
 {
   "name": "opencode-session-metadata",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Store and retrieve arbitrary JSON metadata for OpenCode sessions",
   "main": "dist/plugin.js",
   "types": "dist/plugin.d.ts",
@@ -39,4 +39,3 @@
     "typescript": "^5.0.0"
   }
 }
-
