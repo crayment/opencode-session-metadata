@@ -9,7 +9,7 @@ import path from "path";
  * Store and retrieve arbitrary JSON metadata for OpenCode sessions.
  * Useful for tracking context, state, or relationships between sessions.
  */
-export const SessionMetadataPlugin: Plugin = async ({ client }) => {
+export const SessionMetadataPlugin: Plugin = async ({ client, directory }) => {
   const homeDir = process.env.HOME || process.env.USERPROFILE || "~";
   
   const getMetadataPath = (projectId: string, sessionId: string) => {
@@ -27,7 +27,10 @@ export const SessionMetadataPlugin: Plugin = async ({ client }) => {
         description: "Get current session information (id, title, directory, version, etc.)",
         args: {},
         async execute(args, ctx) {
-          const response = await client.session.get({ path: { id: ctx.sessionID } });
+          const response = await client.session.get({ 
+            path: { id: ctx.sessionID },
+            query: { directory }
+          });
           
           if (response.data) {
             return JSON.stringify(response.data, null, 2);
@@ -46,6 +49,7 @@ export const SessionMetadataPlugin: Plugin = async ({ client }) => {
           try {
             await client.session.update({
               path: { id: ctx.sessionID },
+              query: { directory },
               body: { title },
             });
             
@@ -65,7 +69,10 @@ New title: ${title}`;
         async execute(args, ctx) {
           try {
             // Get session data to get projectID
-            const sessionResponse = await client.session.get({ path: { id: ctx.sessionID } });
+            const sessionResponse = await client.session.get({ 
+              path: { id: ctx.sessionID },
+              query: { directory }
+            });
             if (!sessionResponse.data) {
               return `Error: Could not retrieve session data to locate metadata`;
             }
@@ -105,7 +112,10 @@ Use the setMetadata tool to store custom data for this session.`;
         async execute({ metadata }, ctx) {
           try {
             // Get session data to get projectID
-            const sessionResponse = await client.session.get({ path: { id: ctx.sessionID } });
+            const sessionResponse = await client.session.get({ 
+              path: { id: ctx.sessionID },
+              query: { directory }
+            });
             if (!sessionResponse.data) {
               return `Error: Could not retrieve session data to locate storage`;
             }
