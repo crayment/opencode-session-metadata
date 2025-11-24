@@ -21,7 +21,42 @@ export const SessionMetadataPlugin: Plugin = async ({ client, directory }) => {
     await fs.mkdir(dir, { recursive: true });
   };
 
+  // Unique marker to prevent recursive injection and provide visibility
+  const INJECTION_START_MARKER = "# <opencode-session-metadata-setup>";
+  const INJECTION_END_MARKER = "# </opencode-session-metadata-setup>";
+
   return {
+    /**
+     * Inject session context into bash tool environment
+     * This makes agents "self-aware" without needing to call tools first
+     * Inlines environment variables with clear markers for visibility
+     * 
+     * Note: Unix-only (macOS/Linux). Windows support is not currently implemented
+     * due to complexities with cmd.exe/PowerShell environment handling.
+     */
+    "tool.execute.before": async (input, output) => {
+      // Only modify bash tool calls (works with any shell: sh, bash, zsh, etc.)
+      if (input.tool !== "bash") return;
+      
+      // Skip on Windows - not supported yet
+      if (process.platform === "win32") return;
+      
+      const originalCommand = output.args.command;
+      
+      // Skip if already processed (prevent recursive injection)
+      if (originalCommand.includes(INJECTION_START_MARKER)) return;
+      
+      // Inline environment variable injection with clear markers
+      const envSetup = `${INJECTION_START_MARKER}
+export OPENCODE_SESSION_ID="${input.sessionID}"
+export OPENCODE_WORKSPACE_ROOT="${directory}"
+export OPENCODE_SERVER="http://127.0.0.1:50154"
+${INJECTION_END_MARKER}`;
+      
+      // Prepend environment setup before user's command
+      output.args.command = `${envSetup}\n${originalCommand}`;
+    },
+
     tool: {
       getSessionData: tool({
         description: "Get current session information (id, title, directory, version, etc.)",

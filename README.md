@@ -44,6 +44,10 @@ Store arbitrary JSON metadata for the current session.
 Use setMetadata with metadata {"projectId": "proj-123", "status": "in-progress"}
 ```
 
+## Environment Injection
+
+Automatically injects `OPENCODE_SESSION_ID`, `OPENCODE_WORKSPACE_ROOT`, and `OPENCODE_SERVER` environment variables into all shell commands. Unix-only (macOS/Linux); Windows is not supported.
+
 ## How It Works
 
 Metadata is stored as JSON files in `~/.local/share/opencode/storage/session-metadata/<project-id>/<session-id>.json`. The plugin automatically:
